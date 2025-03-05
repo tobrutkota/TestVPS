@@ -1,16 +1,30 @@
-#!/bin/bash
+import time
+import requests
+import subprocess
 
-while true; do
-    # Pura-pura pencet tombol shift (kalau xdotool tersedia)
-    if command -v xdotool &> /dev/null; then
-        xdotool key Shift_L
-    fi
+SLEEP_TIME = 180  # 3 menit
 
-    # Pura-pura akses server, cek apakah curl sukses
-    if ! curl -s --max-time 5 http://localhost:8888 > /dev/null; then
-        echo "❌ Gagal mengakses server localhost!" >&2
-    fi
+def press_shift():
+    """Pura-pura pencet tombol Shift (kalau xdotool tersedia)."""
+    try:
+        subprocess.run(["xdotool", "key", "Shift_L"], check=True)
+    except FileNotFoundError:
+        pass  # Lewati kalau xdotool tidak tersedia
 
-    # Tunggu 3 menit sebelum ulangi
-    sleep 180
-done
+def check_server():
+    """Cek apakah server localhost:8888 bisa diakses."""
+    try:
+        response = requests.get("http://localhost:8888", timeout=5)
+        if response.status_code != 200:
+            print("❌ Server localhost tidak merespons dengan baik!", flush=True)
+    except requests.exceptions.RequestException:
+        print("❌ Gagal mengakses server localhost!", flush=True)
+
+def main():
+    while True:
+        press_shift()   # Pencet shift
+        check_server()  # Cek server
+        time.sleep(SLEEP_TIME)  # Tunggu 3 menit
+
+if __name__ == "__main__":
+    main()
